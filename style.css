@@ -1,0 +1,215 @@
+/* ============================================================
+   CampusCart — style.css
+   Editorial light theme inspired by clean furniture/lifestyle stores
+   ============================================================ */
+
+/* ── Fonts ── */
+body          { font-family: 'DM Sans', sans-serif; }
+.font-serif   { font-family: 'Playfair Display', serif !important; }
+.font-mono-j  { font-family: 'JetBrains Mono', monospace !important; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: #eef2f7; }
+::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px; }
+
+/* ── NAVBAR ── */
+.nav-link {
+  padding: 6px 14px;
+  border-radius: 8px;
+  color: #475569;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all .2s;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  position: relative;
+}
+.nav-link:hover { color: #0f172a; background: rgba(0,0,0,0.04); }
+
+.dropdown {
+  position: absolute; top: calc(100% + 8px); left: 0;
+  width: 180px; background: #fff;
+  border-radius: 14px; box-shadow: 0 8px 32px rgba(0,0,0,.10);
+  border: 1px solid #f1f5f9; padding: 8px 0;
+  opacity: 0; pointer-events: none;
+  transition: all .2s; z-index: 50;
+}
+.group:hover .dropdown { opacity: 1; pointer-events: all; }
+.dropdown-item {
+  display: block; padding: 9px 16px;
+  font-size: 13px; color: #475569;
+  transition: all .15s; text-decoration: none;
+}
+.dropdown-item:hover { background: #f8fafc; color: #0f172a; }
+
+/* ── HERO ── */
+.watermark {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(80px, 16vw, 200px);
+  font-weight: 700;
+  color: rgba(15,23,42,0.04);
+  white-space: nowrap; pointer-events: none; z-index: 0;
+  letter-spacing: -.02em;
+}
+
+.hero-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 4px 24px rgba(15,23,42,.08);
+  border: 1px solid #f1f5f9;
+}
+
+@keyframes floatA {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes floatB {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+.float-a { animation: floatA 3.5s ease-in-out infinite; }
+.float-b { animation: floatB 4s ease-in-out infinite; animation-delay: .8s; }
+
+/* ── BUTTONS ── */
+.btn-dark {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #0f172a; color: #fff;
+  font-size: 13.5px; font-weight: 600;
+  padding: 12px 24px; border-radius: 10px;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+.btn-dark:hover { background: #1e293b; transform: translateY(-1px); }
+
+.btn-outline {
+  display: inline-flex; align-items: center;
+  background: transparent; color: #0f172a;
+  font-size: 13.5px; font-weight: 600;
+  padding: 12px 24px; border-radius: 10px;
+  border: 1.5px solid #cbd5e1; cursor: pointer;
+  transition: all .2s;
+}
+.btn-outline:hover { border-color: #0f172a; background: #f8fafc; }
+
+/* ── TICKER ── */
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ticker { animation: ticker 24s linear infinite; }
+.ticker-item {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12.5px; letter-spacing: .05em; font-weight: 500;
+  padding: 0 20px;
+}
+.ticker-item::after {
+  content: '·'; opacity: .3; margin-left: 8px;
+}
+
+/* ── FILTER PILLS ── */
+.filter-pill {
+  padding: 8px 18px; border-radius: 20px;
+  font-size: 12.5px; font-weight: 500;
+  border: 1.5px solid #e2e8f0;
+  background: #fff; color: #64748b;
+  cursor: pointer; transition: all .2s;
+}
+.filter-pill:hover { border-color: #94a3b8; color: #0f172a; }
+.active-pill {
+  background: #0f172a !important;
+  color: #fff !important;
+  border-color: #0f172a !important;
+}
+
+/* ── LISTING CARDS ── */
+.listing-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e9eef5;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.listing-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(15,23,42,.10);
+  border-color: #94a3b8;
+}
+
+/* ── FEATURE CARDS ── */
+.feat-card {
+  background: #fff;
+  border: 1px solid #e9eef5;
+  border-radius: 16px;
+  padding: 28px;
+  transition: box-shadow .25s, transform .25s;
+}
+.feat-card:hover {
+  box-shadow: 0 8px 32px rgba(15,23,42,.08);
+  transform: translateY(-2px);
+}
+.feat-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 18px;
+}
+.feat-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px; font-weight: 700;
+  color: #0f172a; margin-bottom: 8px;
+}
+.feat-card p { font-size: 13.5px; color: #64748b; line-height: 1.7; }
+
+/* ── TEAM CARDS ── */
+.team-card {
+  background: #fff; border: 1px solid #e9eef5;
+  border-radius: 16px; padding: 28px;
+  transition: box-shadow .25s, transform .25s;
+}
+.team-card:hover {
+  box-shadow: 0 8px 32px rgba(15,23,42,.08);
+  transform: translateY(-2px);
+}
+.t-avatar {
+  width: 60px; height: 60px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 700;
+  color: #000102; margin-bottom: 16px;
+}
+.skill-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; padding: 4px 10px;
+  border-radius: 6px; background: #f1f5f9;
+  color: #475569; border: 1px solid #e2e8f0;
+}
+
+/* ── TECH PILLS ── */
+.tech-pill {
+  background: #fff; border: 1px solid #e2e8f0;
+  border-radius: 12px; padding: 16px;
+  text-align: center; font-size: 13px; font-weight: 600;
+  color: #334155; display: flex; flex-direction: column;
+  align-items: center; gap: 6px; transition: all .2s;
+}
+.tech-pill:hover { border-color: #94a3b8; background: #f8fafc; }
+.tech-pill span { font-size: 22px; }
+
+/* ── SHOP ALL BUTTON ── */
+.shop-all-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #0f172a; color: #fff;
+  font-size: 14px; font-weight: 600;
+  padding: 14px 36px; border-radius: 50px;
+  border: none; cursor: pointer; transition: all .25s;
+}
+.shop-all-btn:hover { background: #1e293b; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(15,23,42,.15); }
+
+/* ── SCROLL REVEAL ── */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: .1s; } .d2 { transition-delay: .2s; }
+.d3 { transition-delay: .3s; } .d4 { transition-delay: .4s; }
+.d5 { transition-delay: .5s; } .d6 { transition-delay: .6s; }
