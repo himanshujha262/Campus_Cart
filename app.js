@@ -253,6 +253,30 @@ const signupTemplate = (tenants) => `
 `;
 
 const modalTemplates = {
+    notice: `
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            </div>
+            <h3 class="font-serif text-2xl font-bold text-slate-900">Announcements</h3>
+        </div>
+        <p class="text-sm text-slate-500 mb-6">Stay updated with the latest from CampusCart.</p>
+        <div class="space-y-4">
+            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 transition-colors">
+                <p class="text-[10px] font-mono-j text-blue-500 font-bold tracking-widest uppercase mb-1">NEW FEATURE</p>
+                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Marketplace is Live! 🚀</h4>
+                <p class="text-xs text-slate-600 leading-relaxed">You can now post listings and browse items from your fellow college students safely. Make sure you use your verified college email.</p>
+            </div>
+            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50 hover:bg-slate-100 transition-colors">
+                <p class="text-[10px] font-mono-j text-emerald-500 font-bold tracking-widest uppercase mb-1">COMMUNITY</p>
+                <h4 class="font-serif font-bold text-slate-900 text-base mb-1">Welcome to CampusCart</h4>
+                <p class="text-xs text-slate-600 leading-relaxed">A peer-to-peer ecosystem designed to make student life affordable and convenient.</p>
+            </div>
+        </div>
+        <button onclick="closeModal()" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition-colors mt-6">
+            Got it
+        </button>`,
+
     login: `
         <h3 class="font-serif text-2xl font-bold text-slate-900 mb-1">Welcome Back</h3>
         <p class="text-sm text-slate-500 mb-7">Sign in to your CampusCart account.</p>
@@ -371,3 +395,110 @@ const revealObserver = new IntersectionObserver(
     { threshold: 0.1 }
 );
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── CHAT WIDGET ──────────────────────────────────────────────
+const GEMINI_API_KEY = "YOUR_API_KEY_HERE"; // Removed for GitHub push protection
+
+let chatOpen = false;
+function toggleChat() {
+    chatOpen = !chatOpen;
+    const cw = document.getElementById('chatWindow');
+    const dot = document.getElementById('chatDot');
+    
+    if (chatOpen) {
+        cw.classList.remove('opacity-0', 'translate-y-8', 'scale-95', 'invisible');
+        if(dot) dot.classList.add('opacity-0');
+    } else {
+        cw.classList.add('opacity-0', 'translate-y-8', 'scale-95', 'invisible');
+    }
+}
+
+async function handleChatSubmit(e) {
+    e.preventDefault();
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    appendChatMessage('user', text);
+    input.value = '';
+    
+    appendTypingIndicator();
+    
+    try {
+        if (GEMINI_API_KEY === "YOUR_API_KEY_HERE") {
+            throw new Error("Please add your Gemini API Key at the top of the Chat Widget section in app.js.");
+        }
+        
+        const promptContext = "You are a friendly, concise AI assistant for CampusCart, a peer to peer marketplace for college students. Keep responses brief, engaging, and directly answer questions. User says: " + text;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: promptContext }] }]
+            })
+        });
+        
+        const data = await response.json();
+        removeTypingIndicator();
+        
+        if (data.error) throw new Error(data.error.message);
+        
+        const botReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't understand that.";
+        
+        appendChatMessage('bot', botReply);
+        
+    } catch(err) {
+        removeTypingIndicator();
+        appendChatMessage('bot', "⚠️ " + err.message);
+    }
+}
+
+function appendChatMessage(sender, textStr) {
+    const body = document.getElementById('chatBody');
+    const isBot = sender === 'bot';
+    
+    // Safely encode text to prevent HTML injection and preserve new lines
+    const textNode = document.createElement('div');
+    textNode.textContent = textStr;
+    const safeText = textNode.innerHTML.replace(/\n/g, '<br/>');
+    
+    const wrap = document.createElement('div');
+    wrap.className = `flex gap-2.5 ${isBot ? '' : 'flex-row-reverse'}`;
+    
+    if (isBot) {
+        wrap.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 font-bold text-[10px]">bot</div>
+            <div class="bg-slate-100 text-slate-800 px-4 py-2.5 rounded-2xl rounded-tl-sm max-w-[85%] leading-relaxed">${safeText}</div>
+        `;
+    } else {
+        wrap.innerHTML = `
+            <div class="bg-slate-900 text-white px-4 py-2.5 rounded-2xl rounded-tr-sm max-w-[85%] leading-relaxed text-sm">${safeText}</div>
+        `;
+    }
+    
+    body.appendChild(wrap);
+    body.scrollTop = body.scrollHeight;
+}
+
+function appendTypingIndicator() {
+    const body = document.getElementById('chatBody');
+    const wrap = document.createElement('div');
+    wrap.id = "typingIndicator";
+    wrap.className = "flex gap-2.5";
+    wrap.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 font-bold text-[10px]">bot</div>
+        <div class="bg-slate-100 px-4 py-3.5 rounded-2xl rounded-tl-sm flex items-center gap-1 max-w-[85%]">
+            <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+            <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+            <span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+        </div>
+    `;
+    body.appendChild(wrap);
+    body.scrollTop = body.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const ind = document.getElementById('typingIndicator');
+    if (ind) ind.remove();
+}
